@@ -14,7 +14,7 @@ type Comment struct {
 	ID     string
 	Slug   string
 	Body   string
-	Authur string
+	Author string
 }
 
 type Store interface {

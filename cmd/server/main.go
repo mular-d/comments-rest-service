@@ -1,8 +1,10 @@
 package main
 
 import (
+	"context"
 	"fmt"
 
+	"github.com/targerian1999/comments/internal/comment"
 	"github.com/targerian1999/comments/internal/db"
 )
 
@@ -20,7 +22,8 @@ func Run() error {
 		return err
 	}
 
-	fmt.Println("Successfully connected and pinged database")
+	cmtService := comment.NewService(db)
+	fmt.Println(cmtService.GetComment(context.Background(), "9121bf83-28dc-4b8d-bf70-7d347a24ff2e"))
 
 	return nil
 }
