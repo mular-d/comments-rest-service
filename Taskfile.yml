@@ -30,3 +30,7 @@ tasks:
       DB_DB: postgres
       SSL_MODE: disable
       
+  acceptance-tests:
+    cmds:
+      - docker compose up -d 
+      - go test -tags=e2e -v ./...

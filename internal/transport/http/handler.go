@@ -36,8 +36,9 @@ func NewHandler(service CommentService) *Handler {
 }
 
 func (h *Handler) mapRoute() {
-	h.Router.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello world")
+	h.Router.HandleFunc("/alive", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, "I am alive")
 	})
 
 	h.Router.HandleFunc("/api/v1/comment", JWTAuth(h.PostComment)).Methods("POST")
