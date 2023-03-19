@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 	"github.com/targerian1999/comments/internal/comment"
 )
@@ -21,19 +22,42 @@ type Response struct {
 	Message string
 }
 
+type PostCommentReqeust struct {
+	Slug   string `json:"slug" validate:"required"`
+	Body   string `json:"body" validate:"required"`
+	Author string `json:"author" validate:"required"`
+}
+
+func convertPostCommentRequestToComment(c PostCommentReqeust) comment.Comment {
+	return comment.Comment{
+		Slug:   c.Slug,
+		Body:   c.Body,
+		Author: c.Author,
+	}
+}
+
 func (h *Handler) PostComment(w http.ResponseWriter, r *http.Request) {
-	var cmt comment.Comment
+	var cmt PostCommentReqeust
 	if err := json.NewDecoder(r.Body).Decode(&cmt); err != nil {
 		return
 	}
 
-	cmt, err := h.Service.PostComment(r.Context(), cmt)
+	validate := validator.New()
+	err := validate.Struct(cmt)
+	if err != nil {
+		http.Error(w, "not a valid comment", http.StatusBadRequest)
+		return
+	}
+
+	convertedComment := convertPostCommentRequestToComment(cmt)
+
+	postedComment, err := h.Service.PostComment(r.Context(), convertedComment)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	if err := json.NewEncoder(w).Encode(cmt); err != nil {
+	if err := json.NewEncoder(w).Encode(postedComment); err != nil {
 		panic(err)
 	}
 }
