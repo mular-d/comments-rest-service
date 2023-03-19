@@ -101,10 +101,10 @@ func (d *Database) UpdateComment(ctx context.Context, id string, cmt comment.Com
 
 	rows, err := d.Client.NamedQueryContext(
 		ctx,
-		`UPDATE comment SET
+		`UPDATE comments SET
 		slug = :slug,
 		author = :author,
-		body = :body,
+		body = :body
 		WHERE id = :id`,
 		cmtRow,
 	)
