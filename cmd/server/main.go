@@ -1,11 +1,11 @@
 package main
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/targerian1999/comments/internal/comment"
 	"github.com/targerian1999/comments/internal/db"
+	transportHttp "github.com/targerian1999/comments/internal/transport/http"
 )
 
 func Run() error {
@@ -23,17 +23,11 @@ func Run() error {
 	}
 
 	cmtService := comment.NewService(db)
-	fmt.Println(cmtService.GetComment(context.Background(), "9121bf83-28dc-4b8d-bf70-7d347a24ff2e"))
 
-	cmtService.PostComment(
-		context.Background(),
-		comment.Comment{
-			ID:     "9121bf83-28dc-4b8d-bf70-7d347a24ff2e",
-			Slug:   "manual-test",
-			Author: "mular",
-			Body:   "Hello World",
-		},
-	)
+	httpHandler := transportHttp.NewHandler(cmtService)
+	if err := httpHandler.Serve(); err != nil {
+		return err
+	}
 
 	return nil
 }
